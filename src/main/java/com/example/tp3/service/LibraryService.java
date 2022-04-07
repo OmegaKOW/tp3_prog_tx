@@ -3,6 +3,7 @@ package com.example.tp3.service;
 import com.example.tp3.models.library.Livre;
 import com.example.tp3.models.library.Media;
 import com.example.tp3.models.library.MediaType;
+import com.example.tp3.models.users.Client;
 import com.example.tp3.repository.*;
 
 public class LibraryService {
@@ -26,7 +27,6 @@ public class LibraryService {
         this.mediaRepository = mediaRepository;
     }
     //Library
-    //TODO AddDocuments
     public Livre saveLivre(String title, String author, String editor, long exemplaires, int releaseYear, int nbPages, String genre){
         return livreRepository.save(Livre.builder().title(title).author(author).editor(editor).exemplaires(exemplaires).releaseYear(releaseYear).nbPages(nbPages).genre(genre).build());
     }
@@ -49,6 +49,10 @@ public class LibraryService {
 
 
     //Client
+    public Client saveClient(String name, String address){
+        return clientRepository.save(Client.builder().clientName(name).clientAddress(address).build());
+    }
+
     //TODO PayDebt
 
     //TODO Borrow
