@@ -1,10 +1,11 @@
 package com.example.tp3.service;
 
-import com.example.tp3.models.library.Livre;
-import com.example.tp3.models.library.Media;
-import com.example.tp3.models.library.MediaType;
+import com.example.tp3.models.library.*;
 import com.example.tp3.models.users.Client;
 import com.example.tp3.repository.*;
+
+import javax.transaction.Transactional;
+import java.time.LocalDate;
 
 public class LibraryService {
 
@@ -55,7 +56,19 @@ public class LibraryService {
 
     //TODO PayDebt
 
-    //TODO Borrow
+    //TODO Manage Exception
+    @Transactional
+    public void borrowDocument(long clientId, long documentId) throws  IllegalArgumentException{
+        Document document = documentRepository.findById(documentId).get();
+        Client client = clientRepository.findByIdWithEmprunts(clientId);
+        client.setDettes(clientRepository.findByIdWithFines(clientId).getDettes());
+
+        Emprunt emprunt = Emprunt.builder().doc(document).client(client).dateDeRetour(LocalDate.now().plusDays(21)).build();
+
+        client.getEmprunts().add(emprunt);
+        clientRepository.save(client);
+        empruntRepository.save(emprunt);
+    }
 
     //TODO Return
 
