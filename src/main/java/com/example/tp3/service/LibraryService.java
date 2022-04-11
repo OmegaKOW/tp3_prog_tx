@@ -36,8 +36,14 @@ public class LibraryService {
         return mediaRepository.save(Media.builder().title(title).author(author).editor(editor).exemplaires(exemplaires).releaseYear(releaseYear).length(length).type(type).build());
     }
     //TODO FindWithTitle
+
+
     //TODO FindWithAuthor
+
+
     //TODO FindWithYear
+
+
     //TODO FindWithCategory
 
 
