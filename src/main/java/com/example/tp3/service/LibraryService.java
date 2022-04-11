@@ -6,6 +6,7 @@ import com.example.tp3.repository.*;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class LibraryService {
 
@@ -72,6 +73,10 @@ public class LibraryService {
 
     //TODO Return
 
+
     //TODO GetEmprunts
+    public ArrayList<Emprunt> getEmprunts(long clientId){
+        return empruntRepository.findEmprunts(clientId);
+    }
 
 }
