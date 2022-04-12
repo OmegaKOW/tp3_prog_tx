@@ -20,4 +20,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     @Query(value = "SELECT d FROM Document d  WHERE d.releaseYear = :year")
     ArrayList<Document> findDocumentWithAuthor(@Param("year") int year);
 
+
+
 }

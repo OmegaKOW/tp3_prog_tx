@@ -7,6 +7,7 @@ import com.example.tp3.repository.*;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LibraryService {
 
@@ -61,6 +62,10 @@ public class LibraryService {
         return clientRepository.save(Client.builder().clientName(name).clientAddress(address).build());
     }
 
+    public List<Client> getClients(){
+        return clientRepository.findAll();
+    }
+
     //TODO PayDebt
 
     //TODO Manage Exception
@@ -85,4 +90,7 @@ public class LibraryService {
         return empruntRepository.findEmprunts(clientId);
     }
 
+    public Client saveClient(Client toClient) {
+        return clientRepository.save(toClient);
+    }
 }

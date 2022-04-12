@@ -32,6 +32,11 @@ public class Client {
 
     private boolean hasDebt;
 
+    private boolean active;
+
+
+
+
     @OneToMany
     private Set<Emprunt> emprunts = new HashSet<>();
 
