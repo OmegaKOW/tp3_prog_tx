@@ -97,7 +97,7 @@ public class LibraryService {
     }
 
     //TODO Return
-    public void returnBook(long bookId, long clientId) {
+    public void returnDocument(long bookId, long clientId) {
         final Client client = clientRepository.findByIdWithFines(clientId);
         final Document document = livreRepository.getById(bookId);
         final Dette dette = client.returnDocument(document);
@@ -105,7 +105,6 @@ public class LibraryService {
             dette.getEmpruntsEndettes().add(empruntRepository.getWithClientIdAndBookId(bookId,clientId));
             detteRepository.save(dette);
         }
-
     }
 
     //TODO GetEmprunts
