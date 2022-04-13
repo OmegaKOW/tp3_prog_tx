@@ -5,22 +5,31 @@
     <title>Prof</title>
 </head>
 <body>
-<h1>Page Clients</h1>
+<h1>Page Livres</h1>
 <table>
     <thead>
-        <th>Nom</th>
-        <th>Adresse</th>
-        <th>Actif</th>
+        <th>Titre</th>
+        <th>Auteur</th>
+        <th>Editeur</th>
+        <th>Exemplaires</th>
+        <th>Année de parution</th>
+        <th>Genre</th>
+        <th>Nb de pages</th>
     </thead>
     <tbody>
-        <th:block th:each="client, stat : ${clients}">
+        <th:block th:each="livre, stat : ${livres}">
             <tr>
-                <td th:text="${client.getClientName()}">Lacou</td>
-                <td th:text="${client.getClientAddress()}">Lacou</td>
-                <td th:text="${client.isActive()}">true</td>
+                <td th:text="${livre.getTitle()}">Lacou</td>
+                <td th:text="${livre.getAuthor()}">Lacou</td>
+                <td th:text="${livre.getEditor()}">Lacou</td>
+                <td th:text="${livre.getExemplaires()}">10</td>
+                <td th:text="${livre.getReleaseYear()}">1990</td>
+                <td th:text="${livre.getGenre()}">Comédie</td>
+                <td th:text="${livre.getNbPages()}">Lacou</td>
             </tr>
         </th:block>
     </tbody>
 </table>
+<a th:href="@{'/livre'}">New Livre</a>
 </body>
 </html>

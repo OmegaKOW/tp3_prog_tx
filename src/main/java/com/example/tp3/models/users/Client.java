@@ -105,4 +105,12 @@ public class Client {
         return !this.dettes.isEmpty();
     }
 
+    public Dette returnDocument(Document document) {
+        for(Emprunt e : emprunts){
+            if(e.getDoc() == document){
+                return checkDetteEmprunt(e);
+            }
+        }
+        return null;
+    }
 }

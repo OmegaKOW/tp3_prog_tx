@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Result</h1>
+<p th:text="'Id: ' + ${livre.documentID}"/>
+<p th:text="'Titre: ' + ${livre.title}" />
+<p th:text="'Auteur: ' + ${livre.author}" />
+<p th:text="'Éditeur: ' + ${livre.editor}" />
+<p th:text="'Exemplaires: ' + ${livre.exemplaires}" />
+<p th:text="'Année: ' + ${livre.releaseYear}"></p>
+<p th:text="'Genre: ' + ${livre.genre}"></p>
+<p th:text="'Nb Pages: ' + ${livre.nbPages}"></p>
+<a href="/livres">See all livres</a>
+</body>
+</html>

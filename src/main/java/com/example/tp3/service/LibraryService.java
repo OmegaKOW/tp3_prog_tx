@@ -3,7 +3,6 @@ package com.example.tp3.service;
 import com.example.tp3.models.library.*;
 import com.example.tp3.models.users.Client;
 import com.example.tp3.repository.*;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -55,10 +54,10 @@ public class LibraryService {
     }
 
     //TODO FindWithCategory
+    public List<Document> findDocumentWithCategory(String category){
+        return documentRepository.findDocumentWithCategory(category);
+    }
 
-
-
-    //Admin
 
 
 
@@ -77,12 +76,18 @@ public class LibraryService {
 
     //TODO PayDebt
 
+
+
     //TODO Manage Exception
     @Transactional
-    public void borrowDocument(long clientId, long documentId) throws  IllegalArgumentException{
+    public void borrowDocument(long clientId, long documentId) throws  Exception{
         Document document = documentRepository.findById(documentId).get();
         Client client = clientRepository.findByIdWithEmprunts(clientId);
         client.setDettes(clientRepository.findByIdWithFines(clientId).getDettes());
+
+        if(client.getDettes() != null){
+            throw new Exception("Error");
+        }
 
         Emprunt emprunt = Emprunt.builder().doc(document).client(client).dateDeRetour(LocalDate.now().plusDays(21)).build();
 
@@ -92,7 +97,16 @@ public class LibraryService {
     }
 
     //TODO Return
+    public void returnBook(long bookId, long clientId) {
+        final Client client = clientRepository.findByIdWithFines(clientId);
+        final Document document = livreRepository.getById(bookId);
+        final Dette dette = client.returnDocument(document);
+        if(dette != null){
+            dette.getEmpruntsEndettes().add(empruntRepository.getWithClientIdAndBookId(bookId,clientId));
+            detteRepository.save(dette);
+        }
 
+    }
 
     //TODO GetEmprunts
     public ArrayList<Emprunt> getEmprunts(long clientId){
@@ -101,5 +115,21 @@ public class LibraryService {
 
     public Client saveClient(Client toClient) {
         return clientRepository.save(toClient);
+    }
+
+    public void saveLivre(Livre livre) {
+        livreRepository.save(livre);
+    }
+
+    public List<Livre> getLivres() {
+        return livreRepository.findAll();
+    }
+
+    public List<Media> getMedias() {
+        return mediaRepository.findAll();
+    }
+
+    public void saveMedia(Media media) {
+        mediaRepository.save(media);
     }
 }

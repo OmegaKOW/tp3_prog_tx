@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface DocumentRepository extends JpaRepository<Document, Long> {
 
@@ -20,6 +21,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     @Query(value = "SELECT d FROM Document d  WHERE d.releaseYear = :year")
     ArrayList<Document> findDocumentWithYear(@Param("year") int year);
 
-
-
+    @Query(value = "SELECT l FROM Livre l  WHERE l.genre LIKE :category")
+    ArrayList<Document> findDocumentWithCategory(@Param("category")String category);
 }

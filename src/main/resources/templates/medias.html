@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Page Médias</h1>
+<table>
+    <thead>
+    <th>Titre</th>
+    <th>Auteur</th>
+    <th>Editeur</th>
+    <th>Exemplaires</th>
+    <th>Année de parution</th>
+    <th>Durée</th>
+    </thead>
+    <tbody>
+    <th:block th:each="media, stat : ${medias}">
+        <tr>
+            <td th:text="${media.getTitle()}">Lacou</td>
+            <td th:text="${media.getAuthor()}">Lacou</td>
+            <td th:text="${media.getEditor()}">Lacou</td>
+            <td th:text="${media.getExemplaires()}">10</td>
+            <td th:text="${media.getReleaseYear()}">1990</td>
+            <td th:text="${media.getLength()}">2m17</td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
+<a th:href="@{'/media'}">New Media</a>
+</body>
+</html>

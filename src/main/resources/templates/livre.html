@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Client</title>
+</head>
+<body>
+<h1>Form</h1>
+        <form action="#" th:action="@{/livre}" th:object="${livre}" method="post">
+            <p>Titre : <input type="text" th:field="*{title}" /></p>
+            <p>Auteur : <input type="text" th:field="*{author}" /></p>
+            <p>Editeur : <input type="text" th:field="*{editor}" /></p>
+            <p>Exemplaires : <input type="text" th:field="*{exemplaires}" /></p>
+            <p>Année : <input type="text" th:field="*{releaseYear}" /></p>
+            <p>Genre : <input type="text" th:field="*{genre}"/></p>
+            <p>Nb de pages : <input type="text" th:field="*{nbPages}" /></p>
+    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+        </form>
+</body>
+</html>

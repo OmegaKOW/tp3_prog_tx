@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Result</h1>
+<p th:text="'Id: ' + ${media.documentID}"/>
+<p th:text="'Titre: ' + ${media.title}" />
+<p th:text="'Auteur: ' + ${media.author}" />
+<p th:text="'Éditeur: ' + ${media.editor}" />
+<p th:text="'Exemplaires: ' + ${media.exemplaires}" />
+<p th:text="'Année: ' + ${media.releaseYear}"></p>
+<p th:text="'Durée: ' + ${media.length}"></p>
+<a href="/medias">See all medias</a>
+</body>
+</html>
