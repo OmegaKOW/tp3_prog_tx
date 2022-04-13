@@ -35,7 +35,7 @@ public class RootController {
     }
 
     @GetMapping("/clients")
-    public String getProfs(Model model) {
+    public String getClients(Model model) {
         model.addAttribute("pageTitle", "Les clients");
         var clients = libraryService.getClients();
         model.addAttribute("clients", clients);
@@ -43,7 +43,7 @@ public class RootController {
     }
 
     @GetMapping("/crudclient")
-    public String getProfRequest(HttpServletRequest request, Model model) {
+    public String getClientRequest(HttpServletRequest request, Model model) {
         model.addAttribute("pageTitle", "Client");
         var client = new Client();
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);;
@@ -54,7 +54,7 @@ public class RootController {
     }
 
     @GetMapping("/clientedit/{id}")
-    public String getProfRequest(HttpServletRequest request, Model model, @PathVariable(required = false) Long clientId) {
+    public String getClientRequest(HttpServletRequest request, Model model, @PathVariable(required = false) Long clientId) {
         model.addAttribute("pageTitle", "Client");
         var client = new Client();
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
@@ -65,7 +65,7 @@ public class RootController {
     }
 
     @PostMapping("/clientcreate")
-    public String profPost(@ModelAttribute ClientForm clientForm,
+    public String clientPost(@ModelAttribute ClientForm clientForm,
                            BindingResult errors,
                            Model model,
                            RedirectAttributes redirectAttributes) {
@@ -76,4 +76,18 @@ public class RootController {
         model.addAttribute("clientForm", clientForm);
         return "redirect:clientedit/" + clientForm.getClientID();
     }
+
+    @GetMapping("/client")
+    public String clientForm(Model model) {
+        model.addAttribute("client", new Client());
+        return "client";
+    }
+
+    @PostMapping("/client")
+    public String clientSubmit(@ModelAttribute Client client, Model model) {
+        libraryService.saveClient(client);
+        model.addAttribute("client", client);
+        return "resultatClient";
+    }
+
 }

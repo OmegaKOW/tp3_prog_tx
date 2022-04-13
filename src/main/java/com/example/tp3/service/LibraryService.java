@@ -3,12 +3,15 @@ package com.example.tp3.service;
 import com.example.tp3.models.library.*;
 import com.example.tp3.models.users.Client;
 import com.example.tp3.repository.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class LibraryService {
 
     //Repositories
@@ -37,13 +40,19 @@ public class LibraryService {
         return mediaRepository.save(Media.builder().title(title).author(author).editor(editor).exemplaires(exemplaires).releaseYear(releaseYear).length(length).type(type).build());
     }
     //TODO FindWithTitle
-
+    public List<Document> findDocumentWithTitle(String title){
+        return documentRepository.findDocumentWithTitle(title);
+    }
 
     //TODO FindWithAuthor
-
+    public List<Document> findDocumentWithAuthor(String author){
+        return documentRepository.findDocumentWithAuthor(author);
+    }
 
     //TODO FindWithYear
-
+    public List<Document> findDocumentWithYear(int year){
+        return documentRepository.findDocumentWithYear(year);
+    }
 
     //TODO FindWithCategory
 

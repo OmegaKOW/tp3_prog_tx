@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prof</title>
+</head>
+<body>
+<h1>Page Clients</h1>
+<table>
+    <thead>
+        <th>Nom</th>
+        <th>Adresse</th>
+        <th>Actif</th>
+    </thead>
+    <tbody>
+        <th:block th:each="client, stat : ${clients}">
+            <tr>
+                <td th:text="${client.getClientName()}">Lacou</td>
+                <td th:text="${client.getClientAddress()}">Lacou</td>
+                <td th:text="${client.isActive()}">true</td>
+            </tr>
+        </th:block>
+    </tbody>
+</table>
+</body>
+</html>

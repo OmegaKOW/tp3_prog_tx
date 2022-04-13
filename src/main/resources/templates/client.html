@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Client</title>
+</head>
+<body>
+<h1>Form</h1>
+        <form action="#" th:action="@{/client}" th:object="${client}" method="post">
+    <p>Name: <input type="text" th:field="*{clientName}" /></p>
+    <p>Address: <input type="text" th:field="*{clientAddress}" /></p>
+    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+        </form>
+</body>
+</html>
