@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Emprunt de document</title>
+</head>
+<body>
+<form action="#" th:action="@{/getDocumentWithTitle}" th:object="${documentForm}" method="post">
+    <p>Entrez le titre : <input type="text" th:field="*{title}"/></p>
+    <p>Entrez votre Identifiant : <input type="text" th:field="*{clientId}"/></p>
+    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+</form>
+</body>
+</html>

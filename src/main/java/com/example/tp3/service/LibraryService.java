@@ -160,4 +160,7 @@ public class LibraryService {
     public Client findByIdWithAll(long id) {
         return clientRepository.findByIdWithFines(id);
     }
+
+    public Document findDocumentWithTitleTop(String title) { return documentRepository.findDocumentWithTitle(title).get(0);
+    }
 }

@@ -3,20 +3,32 @@ package com.example.tp3.forms;
 import com.example.tp3.models.library.Livre;
 import com.example.tp3.models.library.Media;
 import com.example.tp3.models.library.MediaType;
+import com.sun.istack.NotNull;
+
+import javax.validation.constraints.NotBlank;
 
 public class MediaForm {
     private String documentID;
 
+    @NotNull
+    @NotBlank
     private String title;
 
+    @NotNull
+    @NotBlank
     private String author;
 
+    @NotNull
+    @NotBlank
     private String editor;
-
+    @NotNull
+    @NotBlank
     private long exemplaires;
-
+    @NotNull
+    @NotBlank
     private int releaseYear;
-
+    @NotNull
+    @NotBlank
     private String length;
 
     public MediaForm(String title, String author, String editor, long exemplaires, int releaseYear, String length) {

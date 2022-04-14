@@ -7,7 +7,18 @@
 <body>
 <h1>Form</h1>
         <form action="#" th:action="@{/client}" th:object="${client}" method="post">
-    <p>Name: <input type="text" th:field="*{clientName}" /></p>
+            <table border="1">
+                <tr>
+                    <td><label>Name</label></td>
+                    <td><input type="text" th:field="*{clientName}" /></td>
+                    <td th:if="${#fields.hasErrors('clientName')}">Nom invalide</td>
+                </tr>
+                <tr>
+                    <td><label>Address</label></td>
+                </tr>
+            </table>
+
+
     <p>Address: <input type="text" th:field="*{clientAddress}" /></p>
     <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
         </form>

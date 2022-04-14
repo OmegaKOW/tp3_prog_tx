@@ -1,8 +1,6 @@
 package com.example.tp3.controllers;
 
-import com.example.tp3.forms.ClientForm;
-import com.example.tp3.forms.EmpruntForm;
-import com.example.tp3.forms.EmpruntGetForm;
+import com.example.tp3.forms.*;
 import com.example.tp3.models.library.Document;
 import com.example.tp3.models.library.Emprunt;
 import com.example.tp3.models.library.Livre;
@@ -13,13 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -72,7 +70,7 @@ public class RootController {
     }
 
     @PostMapping("/client")
-    public String clientSubmit(@ModelAttribute Client client, Model model) {
+    public String clientSubmit(@Valid @ModelAttribute Client client, Model model) {
         libraryService.saveClient(client);
         model.addAttribute("client", client);
         return "resultatClient";
@@ -98,7 +96,7 @@ public class RootController {
     }
 
     @PostMapping("/livre")
-    public String livreSubmit(@ModelAttribute Livre livre, Model model) {
+    public String livreSubmit( @Valid @ModelAttribute Livre livre, Model model) {
         libraryService.saveLivre(livre);
         model.addAttribute("livre", livre);
         return "resultatLivre";
@@ -113,6 +111,7 @@ public class RootController {
 
         return "getEmprunts";
     }
+
     @PostMapping("/getEmpruntsWithClientId")
     public RedirectView setEmpruntsWithClientId(@ModelAttribute EmpruntGetForm empruntGetForm, RedirectAttributes redirectAttributes){
 
@@ -162,11 +161,38 @@ public class RootController {
     }
 
     @PostMapping("/media")
-    public String mediaSubmit(@ModelAttribute Media media, Model model) {
+    public String mediaSubmit(@Valid @ModelAttribute Media media, Model model) {
         libraryService.saveMedia(media);
         model.addAttribute("media", media);
         return "resultatMedia";
     }
+
+    @GetMapping("/getDocumentWithTitle")
+    public String getDocumentForEmprunt(@ModelAttribute DocumentEmpruntForm documentForm, Model model){
+        model.addAttribute("documentForm", documentForm);
+
+        return "getDocumentWithTitle";
+    }
+
+    @PostMapping("/getDocumentWithTitle")
+    public RedirectView getDocumentForEmprunt(@ModelAttribute DocumentEmpruntForm documentForm, @ModelAttribute EmpruntForm empruntForm, RedirectAttributes redirectAttributes) throws Exception {
+
+        logger.info("Title " + documentForm.getTitle());
+        logger.info("Client " + documentForm.getClientId());
+        redirectAttributes.addFlashAttribute("documentForm", documentForm);
+        Client client = libraryService.findClientWithId(getIdFromString(documentForm.getClientId())).get();
+        Document document = libraryService.findDocumentWithTitleTop(documentForm.getTitle());
+        redirectAttributes.addAttribute("doc", document.getDocumentID());
+        redirectAttributes.addAttribute("cli", client.getClientID());
+        redirectAttributes.addAttribute("document", document);
+        redirectAttributes.addAttribute("client", client);
+        libraryService.borrowDocument(client.getClientID(), document.getDocumentID());
+        RedirectView redirectView = new RedirectView();
+        redirectView.setContextRelative(true);
+        redirectView.setUrl("/getEmprunts/{cli}");
+        return redirectView;
+    }
+
 
     //-------------------------------------------------------
 
