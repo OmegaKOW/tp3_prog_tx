@@ -3,17 +3,15 @@ package com.example.tp3.models.library;
 
 
 import com.example.tp3.models.users.Client;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,10 +23,19 @@ public class Dette {
 
     private double dette;
 
-    @OneToMany
-    private List<Emprunt> empruntsEndettes = new ArrayList<>();
+    @OneToOne
+    private Emprunt empruntEndette;
 
     @ManyToOne
     private Client client;
 
+    @Override
+    public String toString() {
+        return "Dette{" +
+                "id=" + id +
+                ", dette=" + dette +
+                ", empruntEndette=" + empruntEndette +
+                ", client=" + client.getClientID() +
+                '}';
+    }
 }

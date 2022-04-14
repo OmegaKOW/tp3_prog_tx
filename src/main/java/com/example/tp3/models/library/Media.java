@@ -1,14 +1,15 @@
 package com.example.tp3.models.library;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @SuperBuilder
 public class Media extends Document {
@@ -33,5 +34,14 @@ public class Media extends Document {
 
     public MediaType getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return "Media{" +
+                "documentID=" + documentID +
+                ", length='" + length + '\'' +
+                ", type=" + type +
+                '}';
     }
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mes Emprunts</title>
+</head>
+<body>
+<h1>Mes Emprunts</h1>
+<table>
+    <thead>
+    <th>Document</th>
+    <th>Date de retour</th>
+    </thead>
+    <tbody>
+    <th:block th:each="emprunt, stat : ${emprunts}">
+        <tr>
+            <td th:text="${emprunt.getDoc().getTitle()}">Lacou</td>
+            <td th:text="${emprunt.getDateDeRetour()}">Lacou</td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
+</body>
+</html>

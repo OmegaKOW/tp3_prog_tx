@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Component
 public class LibraryService {
@@ -38,22 +38,22 @@ public class LibraryService {
     public Media saveMedia(String title, String author, String editor, long exemplaires, int releaseYear, String length, MediaType type){
         return mediaRepository.save(Media.builder().title(title).author(author).editor(editor).exemplaires(exemplaires).releaseYear(releaseYear).length(length).type(type).build());
     }
-    //TODO FindWithTitle
+
     public List<Document> findDocumentWithTitle(String title){
         return documentRepository.findDocumentWithTitle(title);
     }
 
-    //TODO FindWithAuthor
+
     public List<Document> findDocumentWithAuthor(String author){
         return documentRepository.findDocumentWithAuthor(author);
     }
 
-    //TODO FindWithYear
+
     public List<Document> findDocumentWithYear(int year){
         return documentRepository.findDocumentWithYear(year);
     }
 
-    //TODO FindWithCategory
+
     public List<Document> findDocumentWithCategory(String category){
         return documentRepository.findDocumentWithCategory(category);
     }
@@ -74,40 +74,57 @@ public class LibraryService {
         return clientRepository.findAll();
     }
 
-    //TODO PayDebt
+
+    public void payDebts(long clientId){
+        Client c = clientRepository.findByIdWithFines(clientId);
+        c.getDettes().clear();
+        clientRepository.save(c);
+        System.out.println("Dettes payées");
+    }
 
 
-
-    //TODO Manage Exception
     @Transactional
     public void borrowDocument(long clientId, long documentId) throws  Exception{
         Document document = documentRepository.findById(documentId).get();
-        Client client = clientRepository.findByIdWithEmprunts(clientId);
+        Client client = clientRepository.findById(clientId).get();
         client.setDettes(clientRepository.findByIdWithFines(clientId).getDettes());
 
-        if(client.getDettes() != null){
+        if(document.getExemplaires() < 1){throw new Exception("Erreur");}
+        if(client.isHasDebt()){
             throw new Exception("Error");
         }
 
-        Emprunt emprunt = Emprunt.builder().doc(document).client(client).dateDeRetour(LocalDate.now().plusDays(21)).build();
 
+
+        document.setExemplaires(document.getExemplaires() - 1);
+        documentRepository.save(document);
+        Emprunt emprunt = Emprunt.builder().doc(document).client(client).dateDeRetour(LocalDate.now().minusDays(1)).build();
         client.getEmprunts().add(emprunt);
         clientRepository.save(client);
-        empruntRepository.save(emprunt);
     }
 
     //TODO Return
     public void returnDocument(long bookId, long clientId) {
-        final Client client = clientRepository.findByIdWithFines(clientId);
-        final Document document = livreRepository.getById(bookId);
-        final Dette dette = client.returnDocument(document);
+        final Emprunt e = empruntRepository.getWithClientIdAndBookId(bookId,clientId);
+        final Client c = clientRepository.findByIdWithFines(clientId);
+        final Dette dette = checkDettes(e);
+
         if(dette != null){
-            dette.getEmpruntsEndettes().add(empruntRepository.getWithClientIdAndBookId(bookId,clientId));
-            detteRepository.save(dette);
+            c.getDettes().add(dette);
+            clientRepository.save(c);
         }
     }
 
-    //TODO GetEmprunts
+    public Dette checkDettes(Emprunt e){
+        if(e.getDateDeRetour().isBefore(LocalDate.now())){
+            double cout = e.getDateDeRetour().until(LocalDate.now(), ChronoUnit.DAYS);
+            Dette dette = Dette.builder().dette(cout * 0.25).client(e.getClient()).build();
+            dette.setEmpruntEndette(e);
+            return dette;
+        }
+        return null;
+    }
+
     public ArrayList<Emprunt> getEmprunts(long clientId){
         return empruntRepository.findEmprunts(clientId);
     }
@@ -130,5 +147,17 @@ public class LibraryService {
 
     public void saveMedia(Media media) {
         mediaRepository.save(media);
+    }
+
+    public Optional<Client> findClientWithId(long id) {
+        return clientRepository.findById(id);
+    }
+
+    public Optional<Document> findDocumentWithId(long id) {
+        return documentRepository.findById(id);
+    }
+
+    public Client findByIdWithAll(long id) {
+        return clientRepository.findByIdWithFines(id);
     }
 }

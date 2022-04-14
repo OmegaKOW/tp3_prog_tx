@@ -4,10 +4,7 @@ import com.example.tp3.models.library.Dette;
 import com.example.tp3.models.library.Document;
 import com.example.tp3.models.library.Emprunt;
 import com.example.tp3.models.library.Livre;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -16,7 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -37,10 +36,10 @@ public class Client {
 
 
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Emprunt> emprunts = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Dette> dettes = new HashSet<>();
 
 
@@ -80,10 +79,10 @@ public class Client {
     }
 
 
-    public Dette returnBook(Livre livre){
+    public Dette returnBook(Document livre){
         for(Emprunt e : emprunts){
             if(e.getDoc() == livre){
-                return checkDetteEmprunt(e);
+               return checkDetteEmprunt(e);
             }
         }
         return null;
@@ -92,11 +91,12 @@ public class Client {
     private Dette checkDetteEmprunt(Emprunt emprunt){
         long amtOfDaysLate = emprunt.getDateDeRetour().until(LocalDate.now(), ChronoUnit.DAYS);
         return setNewDette(emprunt, amtOfDaysLate);
+
     }
 
     private Dette setNewDette(Emprunt e, long daysLate){
         Dette dette = Dette.builder().dette(daysLate * 0.25).client(this).build();
-        dette.getEmpruntsEndettes().add(e);
+        dette.setEmpruntEndette(e);
         dettes.add(dette);
         return dette;
     }
@@ -108,9 +108,13 @@ public class Client {
     public Dette returnDocument(Document document) {
         for(Emprunt e : emprunts){
             if(e.getDoc() == document){
+                System.out.println("found");
                 return checkDetteEmprunt(e);
             }
+
         }
         return null;
     }
+
+
 }

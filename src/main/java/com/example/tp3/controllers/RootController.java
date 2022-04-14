@@ -1,6 +1,10 @@
 package com.example.tp3.controllers;
 
 import com.example.tp3.forms.ClientForm;
+import com.example.tp3.forms.EmpruntForm;
+import com.example.tp3.forms.EmpruntGetForm;
+import com.example.tp3.models.library.Document;
+import com.example.tp3.models.library.Emprunt;
 import com.example.tp3.models.library.Livre;
 import com.example.tp3.models.library.Media;
 import com.example.tp3.models.users.Client;
@@ -10,14 +14,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -101,6 +104,46 @@ public class RootController {
         return "resultatLivre";
     }
 
+    @GetMapping("/getEmpruntsWithClientId")
+    public String getEmpruntsWithClientId(@ModelAttribute EmpruntGetForm empruntGetForm, Model model){
+
+
+        model.addAttribute("empruntGetForm",empruntGetForm);
+        model.addAttribute("id", empruntGetForm.getId());
+
+        return "getEmprunts";
+    }
+    @PostMapping("/getEmpruntsWithClientId")
+    public RedirectView setEmpruntsWithClientId(@ModelAttribute EmpruntGetForm empruntGetForm, RedirectAttributes redirectAttributes){
+
+
+        redirectAttributes.addFlashAttribute("empruntGetForm",empruntGetForm);
+        List<Emprunt> emprunts = libraryService.getEmprunts(getIdFromString(empruntGetForm.getId()));
+        redirectAttributes.addAttribute("id", empruntGetForm.getId());
+        redirectAttributes.addAttribute("emprunts", emprunts);
+
+
+        RedirectView redirectView = new RedirectView();
+        redirectView.setContextRelative(true);
+        redirectView.setUrl("/getEmprunts/{id}");
+        return redirectView;
+    }
+
+    @GetMapping("/getEmprunts/{id}")
+    public String getEmpruntsWithClientId(Model model, @ModelAttribute EmpruntForm empruntForm, @PathVariable("id") String id){
+        logger.info("Id: " + id);
+        long clientId = getIdFromString(id);
+        final List<Emprunt> emprunts = libraryService.getEmprunts(clientId);
+        empruntForm = new EmpruntForm();
+        if(!emprunts.isEmpty()){
+            for(Emprunt e : emprunts){
+                empruntForm = new EmpruntForm(e);
+            }
+        }
+        model.addAttribute("emprunts", emprunts);
+        return "showEmprunts";
+    }
+
     //------------------------------------------------------------------------------------
 
 
@@ -123,5 +166,14 @@ public class RootController {
         libraryService.saveMedia(media);
         model.addAttribute("media", media);
         return "resultatMedia";
+    }
+
+    //-------------------------------------------------------
+
+    private long getIdFromString(String id) {
+        try {
+            return Long.parseLong(id);
+        } catch(NumberFormatException e) {}
+        return 0;
     }
 }

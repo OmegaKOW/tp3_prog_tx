@@ -1,7 +1,6 @@
 package com.example.tp3.models.library;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
@@ -10,7 +9,8 @@ import javax.persistence.Id;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @SuperBuilder
 public abstract class Document {

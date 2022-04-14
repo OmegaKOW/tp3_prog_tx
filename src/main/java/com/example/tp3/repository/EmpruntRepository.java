@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public interface EmpruntRepository extends JpaRepository<Emprunt, Long> {
 
-    @Query(value = "SELECT e FROM Emprunt e  WHERE e.client = :clientId")
+    @Query(value = "SELECT e FROM Emprunt e  WHERE e.client.clientID = :clientId")
     ArrayList<Emprunt> findEmprunts(@Param("clientId") long clientId);
 
     @Query(value = "select e from Emprunt e left join fetch e.client ec left join fetch e.doc ed where ec.clientID = :clientId and ed.documentID = :bookId")
