@@ -6,8 +6,6 @@ import com.example.tp3.models.users.Client;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -21,7 +19,7 @@ public class Dette {
     @GeneratedValue
     private long id;
 
-    private double dette;
+    private double amende;
 
     @OneToOne
     private Emprunt empruntEndette;
@@ -33,7 +31,7 @@ public class Dette {
     public String toString() {
         return "Dette{" +
                 "id=" + id +
-                ", dette=" + dette +
+                ", dette=" + amende +
                 ", empruntEndette=" + empruntEndette +
                 ", client=" + client.getClientID() +
                 '}';

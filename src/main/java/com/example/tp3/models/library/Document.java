@@ -32,31 +32,7 @@ public abstract class Document {
 
     }
 
-
-    public long getDocumentID() {
-        return documentID;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public int getReleaseYear() {
-        return releaseYear;
-    }
-
-
-    public void setDocumentID(int documentID) {
-        this.documentID = documentID;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
+    
 
 
 

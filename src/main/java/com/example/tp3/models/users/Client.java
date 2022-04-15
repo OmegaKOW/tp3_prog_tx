@@ -95,7 +95,7 @@ public class Client {
     }
 
     private Dette setNewDette(Emprunt e, long daysLate){
-        Dette dette = Dette.builder().dette(daysLate * 0.25).client(this).build();
+        Dette dette = Dette.builder().amende(daysLate * 0.25).client(this).build();
         dette.setEmpruntEndette(e);
         dettes.add(dette);
         return dette;

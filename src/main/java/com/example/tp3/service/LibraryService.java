@@ -130,7 +130,7 @@ public class LibraryService {
     public Dette checkDettes(Emprunt e){
         if(e.getDateDeRetour().isBefore(LocalDate.now())){
             double cout = e.getDateDeRetour().until(LocalDate.now(), ChronoUnit.DAYS);
-            Dette dette = Dette.builder().dette(cout * 0.25).client(e.getClient()).build();
+            Dette dette = Dette.builder().amende(cout * 0.25).client(e.getClient()).build();
             dette.setEmpruntEndette(e);
             return dette;
         }

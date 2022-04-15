@@ -24,17 +24,7 @@ public class Media extends Document {
 
     }
 
-    public long getId() {
-        return documentID;
-    }
 
-    public String getLength() {
-        return length;
-    }
-
-    public MediaType getType() {
-        return type;
-    }
 
     @Override
     public String toString() {
