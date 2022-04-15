@@ -13,19 +13,19 @@ public class DocumentForm {
 
     @NotNull
     @NotBlank
-    private String title;
+    private final String title;
 
     @NotNull
     @NotBlank
-    private String author;
+    private final String author;
 
     @NotNull
     @NotBlank
-    private String editor;
+    private final String editor;
 
     @NotNull
     @NotBlank
-    private long exemplaires;
+    private final long exemplaires;
 
     public DocumentForm(String title, String author, String editor, long exemplaires) {
         this.title = title;

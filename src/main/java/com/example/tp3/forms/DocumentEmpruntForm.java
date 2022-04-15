@@ -8,10 +8,10 @@ public class DocumentEmpruntForm {
 
     @NotNull
     @NotBlank
-    private String title;
+    private final String title;
     @NotNull
     @NotBlank
-    private String clientId;
+    private final String clientId;
 
     public DocumentEmpruntForm(String title, String clientId) {
         this.title = title;

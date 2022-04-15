@@ -24,7 +24,7 @@ import java.util.Set;
 public class RootController {
     Logger logger = LoggerFactory.getLogger(RootController.class);
 
-    private LibraryService libraryService;
+    private final LibraryService libraryService;
 
     public RootController(LibraryService libraryService) {
         this.libraryService = libraryService;
@@ -56,7 +56,7 @@ public class RootController {
     public String getClientRequest(HttpServletRequest request, Model model) {
         model.addAttribute("pageTitle", "Client");
         var client = new Client();
-        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);;
+        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
         if (inputFlashMap != null)
             client = (Client) inputFlashMap.get("client");
         model.addAttribute("client", client);
