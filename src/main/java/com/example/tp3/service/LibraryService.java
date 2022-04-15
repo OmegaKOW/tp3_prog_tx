@@ -77,6 +77,11 @@ public class LibraryService {
 
     public void payDebts(long clientId){
         Client c = clientRepository.findByIdWithFines(clientId);
+        for(Dette d : c.getDettes()){
+            Emprunt e = d.getEmpruntEndette();
+            d.setEmpruntEndette(null);
+            c.getEmprunts().remove(e);
+        }
         c.getDettes().clear();
         clientRepository.save(c);
         System.out.println("Dettes payées");
@@ -93,6 +98,12 @@ public class LibraryService {
         if(client.isHasDebt()){
             throw new Exception("Error");
         }
+        for(Emprunt e : client.getEmprunts()){
+            if(e.getDoc() == document){
+                throw new Exception("Document déjà dans votre liste d'emprunt");
+            }
+        }
+
 
 
 
@@ -103,16 +114,17 @@ public class LibraryService {
         clientRepository.save(client);
     }
 
-    //TODO Return
     public void returnDocument(long bookId, long clientId) {
+        final Document d = documentRepository.findById(bookId).get();
+        d.setExemplaires(d.getExemplaires() + 1);
         final Emprunt e = empruntRepository.getWithClientIdAndBookId(bookId,clientId);
         final Client c = clientRepository.findByIdWithFines(clientId);
         final Dette dette = checkDettes(e);
-
         if(dette != null){
             c.getDettes().add(dette);
             clientRepository.save(c);
         }
+        clientRepository.save(c);
     }
 
     public Dette checkDettes(Emprunt e){

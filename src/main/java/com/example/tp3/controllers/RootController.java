@@ -32,13 +32,13 @@ public class RootController {
 
     @GetMapping("/")
     public String getRootRequest(Model model) {
-        model.addAttribute("pageTitle", "Mon Demo");
+        model.addAttribute("pageTitle", "Biblio Javatown");
         return "index";
     }
 
     @GetMapping("/documents")
     public String getIndexRequest(Model model) {
-        model.addAttribute("pageTitle", "Mon Demo");
+        model.addAttribute("pageTitle", "Biblio Javatown");
         return "documents";
     }
 
@@ -175,13 +175,7 @@ public class RootController {
     public String getEmpruntsWithClientId(Model model, @ModelAttribute EmpruntForm empruntForm, @PathVariable("id") String id){
         logger.info("Id: " + id);
         long clientId = getIdFromString(id);
-        final List<Emprunt> emprunts = libraryService.getEmprunts(clientId);
-        empruntForm = new EmpruntForm();
-        if(!emprunts.isEmpty()){
-            for(Emprunt e : emprunts){
-                empruntForm = new EmpruntForm(e);
-            }
-        }
+        List<Emprunt> emprunts = libraryService.getEmprunts(clientId);
         model.addAttribute("emprunts", emprunts);
         return "showEmprunts";
     }
@@ -200,50 +194,87 @@ public class RootController {
     @PostMapping("/returnDocument")
     public RedirectView returnDocument(RedirectAttributes redirectAttributes, @ModelAttribute RetourForm retourForm){
 
-        long clientId = getIdFromString(retourForm.getId());
-        long documentId = libraryService.findDocumentWithTitleTop(retourForm.getTitle()).getDocumentID();
-        libraryService.returnDocument(documentId,clientId);
 
-        redirectAttributes.addAttribute("id", clientId);
+        try {
+            long clientId = getIdFromString(retourForm.getId());
+            long documentId = libraryService.findDocumentWithTitleTop(retourForm.getTitle()).getDocumentID();
+            libraryService.returnDocument(documentId,clientId);
 
-        RedirectView redirectView = new RedirectView();
-        redirectView.setContextRelative(true);
-        redirectView.setUrl("/getEmprunts/{id}");
+            redirectAttributes.addAttribute("id", clientId);
+            RedirectView redirectView = new RedirectView();
+            redirectView.setContextRelative(true);
+            redirectView.setUrl("/getEmprunts/{id}");
 
-        return redirectView;
+            return redirectView;
+        }catch (Exception e){
+            RedirectView redirectView = new RedirectView();
+            redirectView.setContextRelative(true);
+            redirectView.setUrl("/returnDocument");
+            return redirectView;
+        }
+
+
+
+
     }
 
 
     //------------------TROUVER UN DOCUMENT------------------------
     @GetMapping("/getDocumentWithTitle")
-    public String getDocumentForEmprunt(@Valid @ModelAttribute DocumentEmpruntForm documentForm, Model model){
+    public String getDocumentForEmprunt(@ModelAttribute DocumentEmpruntForm documentForm,BindingResult result, Model model){
         model.addAttribute("documentForm", documentForm);
 
         return "getDocumentWithTitle";
     }
 
     @PostMapping("/getDocumentWithTitle")
-    public RedirectView getDocumentForEmprunt(@ModelAttribute DocumentEmpruntForm documentForm, @ModelAttribute EmpruntForm empruntForm, RedirectAttributes redirectAttributes) throws Exception {
+    public RedirectView getDocumentForEmprunt(@Valid @ModelAttribute DocumentEmpruntForm documentForm,BindingResult errors, RedirectAttributes redirectAttributes) throws Exception {
         //Logging
         logger.info("Title " + documentForm.getTitle());
         logger.info("Client " + documentForm.getClientId());
+        RedirectView redirectView = new RedirectView();
+        if(errors.hasErrors()){
+            redirectAttributes.addFlashAttribute("documentEmpruntForm", documentForm);
+            redirectView.setContextRelative(true);
+            redirectView.setUrl("/getDocumentWithTitle");
+            return redirectView;
+        }
 
         redirectAttributes.addFlashAttribute("documentForm", documentForm);
 
+        try{
+            libraryService.findClientWithId(getIdFromString(documentForm.getClientId())).get();
+        }catch (Exception e){
+            redirectView.setContextRelative(true);
+            redirectView.setUrl("/getDocumentWithTitle");
+            return redirectView;
+        }
+
         Client client = libraryService.findClientWithId(getIdFromString(documentForm.getClientId())).get();
-        Document document = libraryService.findDocumentWithTitleTop(documentForm.getTitle());
+        try{
+            Document document = libraryService.findDocumentWithTitleTop(documentForm.getTitle());
+            redirectAttributes.addAttribute("doc", document.getDocumentID());
+            redirectAttributes.addAttribute("cli", client.getClientID());
+            redirectAttributes.addAttribute("document", document);
+            redirectAttributes.addAttribute("client", client);
+
+            libraryService.borrowDocument(client.getClientID(), document.getDocumentID());
+
+            redirectView.setContextRelative(true);
+            redirectView.setUrl("/getEmprunts/{cli}");
+            return redirectView;
 
 
-        redirectAttributes.addAttribute("doc", document.getDocumentID());
-        redirectAttributes.addAttribute("cli", client.getClientID());
-        redirectAttributes.addAttribute("document", document);
-        redirectAttributes.addAttribute("client", client);
+        }catch (Exception e){
+            redirectAttributes.addFlashAttribute("documentEmpruntForm", documentForm);
+            redirectView.setContextRelative(true);
+            redirectView.setUrl("/getDocumentWithTitle");
+            return redirectView;
+        }
 
-        libraryService.borrowDocument(client.getClientID(), document.getDocumentID());
-        RedirectView redirectView = new RedirectView();
-        redirectView.setContextRelative(true);
-        redirectView.setUrl("/getEmprunts/{cli}");
-        return redirectView;
+
+
+
     }
 
     //---------------------DETTES---------------------------------------
@@ -285,20 +316,38 @@ public class RootController {
 
 
     @GetMapping("/payDettes")
-    public String getPayDebts(@ModelAttribute EmpruntGetForm empruntGetForm, Model model){
+    public String getPayDebts(@ModelAttribute EmpruntGetForm empruntGetForm,BindingResult result, Model model){
         model.addAttribute("empruntGetForm", empruntGetForm);
 
         return "payDettes";
     }
     @PostMapping("/payDettes")
-    public RedirectView getPayDebts(@Valid @ModelAttribute EmpruntGetForm empruntGetForm, RedirectAttributes redirectAttributes){
-        redirectAttributes.addAttribute("empruntGetForm", empruntGetForm);
+    public RedirectView getPayDebts(@Valid @ModelAttribute EmpruntGetForm empruntGetForm,BindingResult errors, RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("empruntGetForm", empruntGetForm);
+        try{
+            libraryService.findClientWithId(getIdFromString(empruntGetForm.getId())).get();
+        }catch (Exception e){
+
+            RedirectView redirectView = new RedirectView();
+            redirectView.setContextRelative(true);
+            redirectView.setUrl("/payDettes");
+            return redirectView;
+        }
 
         Client client = libraryService.findClientWithId(getIdFromString(empruntGetForm.getId())).get();
+        if(client == null){
+            RedirectView redirectView = new RedirectView();
+            redirectView.setContextRelative(true);
+            redirectView.setUrl("/payDettes");
+            return redirectView;
+        }
         redirectAttributes.addAttribute("cli", client.getClientID());
 
         RedirectView redirectView = new RedirectView();
         redirectView.setContextRelative(true);
+        if(errors.hasErrors()){
+            redirectView.setUrl("/payDettes");
+        }
         redirectView.setUrl("/payDettes/{cli}");
         return redirectView;
     }

@@ -25,20 +25,13 @@ public class Tp3Application implements CommandLineRunner {
         long c1Id = libraryService.saveClient("Thomas", "104 rue Laforet").getClientID();
         long l1Id = libraryService.saveLivre("Les chats", "Marcel", "Chatown", 3, 1990, 134, "Étude").getDocumentID();
 
-        try{
-            libraryService.borrowDocument(c1Id, l1Id);
-        }catch(Exception e){e.printStackTrace();}
 
         System.out.println(libraryService.findByIdWithAll(c1Id));
         System.out.println(libraryService.findDocumentWithId(l1Id).get());
 
         System.out.println(libraryService.getEmprunts(c1Id));
-        try{
-           libraryService.returnDocument(l1Id, c1Id);
-        }catch(Exception e){e.printStackTrace();}
 
         System.out.println(libraryService.findByIdWithAll(c1Id));
 
-        System.out.println(libraryService.findByIdWithAll(c1Id));
     }
 }

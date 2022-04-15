@@ -8,7 +8,6 @@ import java.util.List;
 public class EmpruntGetForm {
 
     @NotNull
-    @NotBlank
     private String id;
 
 
