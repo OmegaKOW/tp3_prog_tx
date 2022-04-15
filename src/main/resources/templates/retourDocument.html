@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Retour</title>
+</head>
+<body>
+<form action="#" th:action="@{/returnDocument}" th:object="${retourForm}" method="post">
+    <p>Titre du document: <input type="text" th:field="*{title}"/></p>
+    <p>Votre ID: <input type="text" th:field="*{id}"/></p>
+    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+</form>
+</body>
+</html>

@@ -1,14 +1,14 @@
 package com.example.tp3.forms;
 
 import com.example.tp3.models.users.Client;
-import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
-@Getter
 @Data
 public class ClientForm {
 
@@ -18,10 +18,12 @@ public class ClientForm {
 
     @NotNull
     @NotBlank
+    @Size(min=5)
     private String clientName;
 
     @NotNull
     @NotBlank
+    @Size(min=6)
     private String clientAddress;
 
     private boolean hasDebt;
@@ -32,8 +34,12 @@ public class ClientForm {
         this.clientName = clientName;
         this.clientAddress = clientAddress;
         this.hasDebt = hasDebt;
+    }
 
+    public ClientForm(){}
 
+    public ClientForm(Client client) {
+        this(Long.toString(client.getClientID()), client.getClientName(), client.getClientAddress(), client.isHasDebt());
     }
 
     public Client toClient(){

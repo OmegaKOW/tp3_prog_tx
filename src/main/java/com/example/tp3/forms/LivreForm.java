@@ -1,14 +1,15 @@
 package com.example.tp3.forms;
 
 import com.example.tp3.models.library.Livre;
-import com.sun.istack.NotNull;
+import lombok.Data;
+
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+@Data
 public class LivreForm {
 
-    @NotNull
-    @NotBlank
     private String documentID;
 
     @NotNull
@@ -24,15 +25,12 @@ public class LivreForm {
     private String editor;
 
     @NotNull
-    @NotBlank
     private long exemplaires;
 
     @NotNull
-    @NotBlank
     private int releaseYear;
 
     @NotNull
-    @NotBlank
     private int nbPages;
 
     @NotNull
@@ -49,7 +47,17 @@ public class LivreForm {
         this.genre = genre;
     }
 
+    public LivreForm(){
+
+    }
+
+    public LivreForm(Livre livre) {
+        this(livre.getTitle(), livre.getAuthor(), livre.getEditor(), livre.getExemplaires(),livre.getReleaseYear(),livre.getNbPages(), livre.getGenre());
+    }
+
     public Livre toLivre(){
         return Livre.builder().title(title).author(author).editor(editor).exemplaires(exemplaires).releaseYear(releaseYear).nbPages(nbPages).genre(genre).build();
     }
+
+
 }

@@ -1,16 +1,14 @@
 package com.example.tp3.controllers;
 
 import com.example.tp3.forms.*;
-import com.example.tp3.models.library.Document;
-import com.example.tp3.models.library.Emprunt;
-import com.example.tp3.models.library.Livre;
-import com.example.tp3.models.library.Media;
+import com.example.tp3.models.library.*;
 import com.example.tp3.models.users.Client;
 import com.example.tp3.service.LibraryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
@@ -20,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 public class RootController {
@@ -43,6 +42,8 @@ public class RootController {
         return "documents";
     }
 
+    //------------------DOCUMENTS--------------------------
+
     @GetMapping("/clients")
     public String getClients(Model model) {
         model.addAttribute("pageTitle", "Les clients");
@@ -64,21 +65,25 @@ public class RootController {
 
 
     @GetMapping("/client")
-    public String clientForm(Model model) {
-        model.addAttribute("client", new Client());
+    public String clientForm(@ModelAttribute ClientForm clientForm, BindingResult result, Model model) {
+        clientForm = new ClientForm(new Client());
+        model.addAttribute("clientForm", clientForm);
         return "client";
     }
 
     @PostMapping("/client")
-    public String clientSubmit(@Valid @ModelAttribute Client client, Model model) {
-        libraryService.saveClient(client);
+    public String clientSubmit(@Valid @ModelAttribute ClientForm client, BindingResult errors, Model model) {
+        if(errors.hasErrors()){
+            return "client";
+        }
+        libraryService.saveClient(client.toClient());
         model.addAttribute("client", client);
         return "resultatClient";
     }
 
 
 
-    //--------------------------------------------------------------------------
+    //---------------------------LIVRE-----------------------------------------------
 
 
     @GetMapping("/livres")
@@ -90,17 +95,55 @@ public class RootController {
     }
 
     @GetMapping("/livre")
-    public String livreForm(Model model) {
-        model.addAttribute("livre", new Livre());
+    public String livreForm(@ModelAttribute LivreForm livreForm,BindingResult result, Model model) {
+        livreForm = new LivreForm(new Livre());
+        model.addAttribute("livreForm", livreForm);
         return "livre";
     }
 
     @PostMapping("/livre")
-    public String livreSubmit( @Valid @ModelAttribute Livre livre, Model model) {
-        libraryService.saveLivre(livre);
-        model.addAttribute("livre", livre);
+    public String livreSubmit(@Valid @ModelAttribute LivreForm livreForm,BindingResult errors, Model model) {
+        if(errors.hasErrors()){
+            return "livre";
+        }
+        libraryService.saveLivre(livreForm.toLivre());
+        model.addAttribute("livre", livreForm);
         return "resultatLivre";
     }
+
+
+
+
+    //---------------------------MÉDIA---------------------------------------------------------
+
+
+    @GetMapping("/medias")
+    public String getMedias(Model model) {
+        model.addAttribute("pageTitle", "Les medias");
+        var medias = libraryService.getMedias();
+        model.addAttribute("medias", medias);
+        return "medias";
+    }
+
+    @GetMapping("/media")
+    public String mediaForm(@ModelAttribute MediaForm mediaForm,BindingResult result, Model model) {
+        mediaForm = new MediaForm(new Media());
+        model.addAttribute("mediaForm", mediaForm);
+        return "media";
+    }
+
+    @PostMapping("/media")
+    public String mediaSubmit(@Valid @ModelAttribute MediaForm media,BindingResult errors, Model model) {
+        if(errors.hasErrors()){
+            return "media";
+        }
+        libraryService.saveMedia(media.toMedia());
+        model.addAttribute("media", media);
+        return "resultatMedia";
+    }
+
+
+    //----------------EMPRUNTS-----------------------
 
     @GetMapping("/getEmpruntsWithClientId")
     public String getEmpruntsWithClientId(@ModelAttribute EmpruntGetForm empruntGetForm, Model model){
@@ -143,32 +186,37 @@ public class RootController {
         return "showEmprunts";
     }
 
-    //------------------------------------------------------------------------------------
 
+    //-------------------------RETOURS--------------------------------
 
-    @GetMapping("/medias")
-    public String getMedias(Model model) {
-        model.addAttribute("pageTitle", "Les medias");
-        var medias = libraryService.getMedias();
-        model.addAttribute("medias", medias);
-        return "medias";
+    @GetMapping("/returnDocument")
+    public String returnDocument(Model model, RetourForm retourForm){
+        model.addAttribute("empruntGetForm",retourForm);
+        model.addAttribute("title", retourForm.getTitle());
+
+        return "retourDocument";
     }
 
-    @GetMapping("/media")
-    public String mediaForm(Model model) {
-        model.addAttribute("media", new Media());
-        return "media";
+    @PostMapping("/returnDocument")
+    public RedirectView returnDocument(RedirectAttributes redirectAttributes, @ModelAttribute RetourForm retourForm){
+
+        long clientId = getIdFromString(retourForm.getId());
+        long documentId = libraryService.findDocumentWithTitleTop(retourForm.getTitle()).getDocumentID();
+        libraryService.returnDocument(documentId,clientId);
+
+        redirectAttributes.addAttribute("id", clientId);
+
+        RedirectView redirectView = new RedirectView();
+        redirectView.setContextRelative(true);
+        redirectView.setUrl("/getEmprunts/{id}");
+
+        return redirectView;
     }
 
-    @PostMapping("/media")
-    public String mediaSubmit(@Valid @ModelAttribute Media media, Model model) {
-        libraryService.saveMedia(media);
-        model.addAttribute("media", media);
-        return "resultatMedia";
-    }
 
+    //------------------TROUVER UN DOCUMENT------------------------
     @GetMapping("/getDocumentWithTitle")
-    public String getDocumentForEmprunt(@ModelAttribute DocumentEmpruntForm documentForm, Model model){
+    public String getDocumentForEmprunt(@Valid @ModelAttribute DocumentEmpruntForm documentForm, Model model){
         model.addAttribute("documentForm", documentForm);
 
         return "getDocumentWithTitle";
@@ -176,21 +224,98 @@ public class RootController {
 
     @PostMapping("/getDocumentWithTitle")
     public RedirectView getDocumentForEmprunt(@ModelAttribute DocumentEmpruntForm documentForm, @ModelAttribute EmpruntForm empruntForm, RedirectAttributes redirectAttributes) throws Exception {
-
+        //Logging
         logger.info("Title " + documentForm.getTitle());
         logger.info("Client " + documentForm.getClientId());
+
         redirectAttributes.addFlashAttribute("documentForm", documentForm);
+
         Client client = libraryService.findClientWithId(getIdFromString(documentForm.getClientId())).get();
         Document document = libraryService.findDocumentWithTitleTop(documentForm.getTitle());
+
+
         redirectAttributes.addAttribute("doc", document.getDocumentID());
         redirectAttributes.addAttribute("cli", client.getClientID());
         redirectAttributes.addAttribute("document", document);
         redirectAttributes.addAttribute("client", client);
+
         libraryService.borrowDocument(client.getClientID(), document.getDocumentID());
         RedirectView redirectView = new RedirectView();
         redirectView.setContextRelative(true);
         redirectView.setUrl("/getEmprunts/{cli}");
         return redirectView;
+    }
+
+    //---------------------DETTES---------------------------------------
+
+    @GetMapping("/getDettesWithClientId")
+    public String getDettesWithClientId(@Valid @ModelAttribute EmpruntGetForm empruntGetForm, Model model){
+
+
+        model.addAttribute("empruntGetForm",empruntGetForm);
+        model.addAttribute("id", empruntGetForm.getId());
+
+        return "getDettes";
+    }
+
+    @PostMapping("/getDettesWithClientId")
+    public RedirectView setDettesvWithClientId(@ModelAttribute EmpruntGetForm empruntGetForm, RedirectAttributes redirectAttributes){
+
+
+        redirectAttributes.addFlashAttribute("empruntGetForm",empruntGetForm);
+        Set<Dette> dettes = libraryService.getDettesWithClientId(getIdFromString(empruntGetForm.getId()));
+        redirectAttributes.addAttribute("id", empruntGetForm.getId());
+        redirectAttributes.addAttribute("dettes", dettes);
+
+
+        RedirectView redirectView = new RedirectView();
+        redirectView.setContextRelative(true);
+        redirectView.setUrl("/getDettes/{id}");
+        return redirectView;
+    }
+
+    @GetMapping("/getDettes/{id}")
+    public String getDettesWithClientId(Model model, @ModelAttribute EmpruntForm empruntForm, @PathVariable("id") String id){
+        logger.info("Id: " + id);
+        long clientId = getIdFromString(id);
+        final Set<Dette> dettes = libraryService.getDettesWithClientId(clientId);
+        model.addAttribute("dettes", dettes);
+        return "showDettes";
+    }
+
+
+    @GetMapping("/payDettes")
+    public String getPayDebts(@ModelAttribute EmpruntGetForm empruntGetForm, Model model){
+        model.addAttribute("empruntGetForm", empruntGetForm);
+
+        return "payDettes";
+    }
+    @PostMapping("/payDettes")
+    public RedirectView getPayDebts(@Valid @ModelAttribute EmpruntGetForm empruntGetForm, RedirectAttributes redirectAttributes){
+        redirectAttributes.addAttribute("empruntGetForm", empruntGetForm);
+
+        Client client = libraryService.findClientWithId(getIdFromString(empruntGetForm.getId())).get();
+        redirectAttributes.addAttribute("cli", client.getClientID());
+
+        RedirectView redirectView = new RedirectView();
+        redirectView.setContextRelative(true);
+        redirectView.setUrl("/payDettes/{cli}");
+        return redirectView;
+    }
+
+    @GetMapping("/payDettes/{id}")
+    public RedirectView payDettesWithClientId(Model model, @Valid @ModelAttribute EmpruntForm empruntForm, @PathVariable("id") String id, RedirectAttributes redirectAttributes){
+        logger.info("Id: " + id);
+        long clientId = getIdFromString(id);
+        libraryService.payDebts(clientId);
+
+        redirectAttributes.addAttribute("cli", clientId);
+
+        RedirectView redirectView = new RedirectView();
+        redirectView.setContextRelative(true);
+        redirectView.setUrl("/getDettes/{cli}");
+        return redirectView;
+
     }
 
 

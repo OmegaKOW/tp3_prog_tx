@@ -3,10 +3,12 @@ package com.example.tp3.forms;
 import com.example.tp3.models.library.Livre;
 import com.example.tp3.models.library.Media;
 import com.example.tp3.models.library.MediaType;
-import com.sun.istack.NotNull;
+import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+@Data
 public class MediaForm {
     private String documentID;
 
@@ -22,13 +24,10 @@ public class MediaForm {
     @NotBlank
     private String editor;
     @NotNull
-    @NotBlank
     private long exemplaires;
     @NotNull
-    @NotBlank
     private int releaseYear;
     @NotNull
-    @NotBlank
     private String length;
 
     public MediaForm(String title, String author, String editor, long exemplaires, int releaseYear, String length) {
@@ -38,6 +37,13 @@ public class MediaForm {
         this.exemplaires = exemplaires;
         this.releaseYear = releaseYear;
         this.length = length;
+    }
+
+    public MediaForm() {
+    }
+
+    public MediaForm(Media media) {
+        this(media.getTitle(), media.getAuthor(), media.getEditor(), media.getExemplaires(), media.getReleaseYear(), media.getLength());
     }
 
     public Media toMedia(){

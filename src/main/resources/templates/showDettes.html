@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dettes</title>
+</head>
+<body>
+<h1>Mes Dettes</h1>
+<table>
+    <thead>
+    <th>Document</th>
+    <th>Date de retour</th>
+    <th>Amende</th>
+    </thead>
+    <tbody>
+    <th:block th:each="dette, stat : ${dettes}">
+        <tr>
+            <td th:text="${dette.getEmpruntEndette().getDoc().getTitle()}">Lacou</td>
+            <td th:text="${dette.getEmpruntEndette().getDateDeRetour()}">Lacou</td>
+            <td th:text="${dette.getDette()}">Lacou</td>
+        </tr>
+    </th:block>
+    </tbody>
+</table>
+<a th:href="@{'/documents'}">Les documents</a>
+<br>
+<a th:href="@{'/payDettes'}">Payer les dettes</a>
+</body>
+</html>

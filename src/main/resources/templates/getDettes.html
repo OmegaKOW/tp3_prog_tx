@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Entrez votre ID</title>
+</head>
+<body>
+<form action="#" th:action="@{/getDettesWithClientId}" th:object="${empruntGetForm}" method="post">
+    <p>Id: <input type="text" th:field="*{id}"/></p>
+    <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+</form>
+</body>
+</html>

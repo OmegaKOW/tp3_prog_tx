@@ -3,13 +3,23 @@ package com.example.tp3.forms;
 import com.example.tp3.models.library.Document;
 import com.example.tp3.models.library.Emprunt;
 import com.example.tp3.models.users.Client;
+import com.sun.istack.NotNull;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 public class EmpruntForm {
+    @NotNull
+    @NotBlank
     private String id;
+    @NotNull
+    @NotBlank
     private Client client;
+    @NotNull
+    @NotBlank
     private Document document;
+    @NotNull
+    @NotBlank
     private LocalDate dateDeRetour;
 
     public EmpruntForm(String id, Client client, Document document, LocalDate dateDeRetour) {

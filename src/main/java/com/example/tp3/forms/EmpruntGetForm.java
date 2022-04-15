@@ -1,14 +1,17 @@
 package com.example.tp3.forms;
 
+import com.sun.istack.NotNull;
+
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 public class EmpruntGetForm {
 
-
+    @NotNull
+    @NotBlank
     private String id;
 
 
-    private List<DocumentForm> doc;
 
     public EmpruntGetForm(String id) {
         this.id = id;

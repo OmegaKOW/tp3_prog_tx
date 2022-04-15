@@ -162,5 +162,9 @@ public class LibraryService {
     }
 
     public Document findDocumentWithTitleTop(String title) { return documentRepository.findDocumentWithTitle(title).get(0);
+
+    }
+    public Set<Dette> getDettesWithClientId(long id){
+        return clientRepository.findByIdWithFines(id).getDettes();
     }
 }

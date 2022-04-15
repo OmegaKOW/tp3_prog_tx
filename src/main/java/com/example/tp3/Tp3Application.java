@@ -39,11 +39,6 @@ public class Tp3Application implements CommandLineRunner {
 
         System.out.println(libraryService.findByIdWithAll(c1Id));
 
-        try{
-            libraryService.payDebts(c1Id);
-        }catch (Exception ignored){
-
-        }
         System.out.println(libraryService.findByIdWithAll(c1Id));
     }
 }
