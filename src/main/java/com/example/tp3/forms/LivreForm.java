@@ -1,5 +1,7 @@
 package com.example.tp3.forms;
 
+import com.example.tp3.dtos.LivreCreationDTO;
+import com.example.tp3.dtos.LivreDTO;
 import com.example.tp3.models.library.Livre;
 import lombok.Data;
 
@@ -51,7 +53,7 @@ public class LivreForm {
 
     }
 
-    public LivreForm(Livre livre) {
+    public LivreForm(LivreCreationDTO livre) {
         this(livre.getTitle(), livre.getAuthor(), livre.getEditor(), livre.getExemplaires(),livre.getReleaseYear(),livre.getNbPages(), livre.getGenre());
     }
 

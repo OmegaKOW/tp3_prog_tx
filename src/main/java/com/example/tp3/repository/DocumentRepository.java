@@ -13,14 +13,7 @@ import java.util.List;
 public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     @Query(value = "SELECT d FROM Document d  WHERE d.title LIKE :title")
-    ArrayList<Document> findDocumentWithTitle(@Param("title") String title);
+    List<Document> findDocumentWithTitle(@Param("title") String title);
 
-    @Query(value = "SELECT d FROM Document d  WHERE d.author LIKE :author")
-    ArrayList<Document> findDocumentWithAuthor(@Param("author") String author);
 
-    @Query(value = "SELECT d FROM Document d  WHERE d.releaseYear = :year")
-    ArrayList<Document> findDocumentWithYear(@Param("year") int year);
-
-    @Query(value = "SELECT l FROM Livre l  WHERE l.genre LIKE :category")
-    ArrayList<Document> findDocumentWithCategory(@Param("category")String category);
 }

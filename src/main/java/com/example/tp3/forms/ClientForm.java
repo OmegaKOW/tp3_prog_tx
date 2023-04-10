@@ -1,5 +1,6 @@
 package com.example.tp3.forms;
 
+import com.example.tp3.dtos.ClientCreationDTO;
 import com.example.tp3.models.users.Client;
 import lombok.Data;
 import lombok.Getter;
@@ -38,7 +39,7 @@ public class ClientForm {
 
     public ClientForm(){}
 
-    public ClientForm(Client client) {
+    public ClientForm(ClientCreationDTO client) {
         this(Long.toString(client.getClientID()), client.getClientName(), client.getClientAddress(), client.isHasDebt());
     }
 

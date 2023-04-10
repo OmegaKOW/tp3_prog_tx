@@ -1,5 +1,9 @@
 package com.example.tp3.controllers;
 
+import com.example.tp3.dtos.ClientCreationDTO;
+import com.example.tp3.dtos.ClientDTO;
+import com.example.tp3.dtos.LivreCreationDTO;
+import com.example.tp3.dtos.LivreDTO;
 import com.example.tp3.forms.*;
 import com.example.tp3.models.library.*;
 import com.example.tp3.models.users.Client;
@@ -55,10 +59,10 @@ public class RootController {
     @GetMapping("/crudclient")
     public String getClientRequest(HttpServletRequest request, Model model) {
         model.addAttribute("pageTitle", "Client");
-        var client = new Client();
+        var client = new ClientCreationDTO();
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
         if (inputFlashMap != null)
-            client = (Client) inputFlashMap.get("client");
+            client = (ClientCreationDTO) inputFlashMap.get("client");
         model.addAttribute("client", client);
         return "crudclient";
     }
@@ -66,7 +70,7 @@ public class RootController {
 
     @GetMapping("/client")
     public String clientForm(@ModelAttribute ClientForm clientForm, BindingResult result, Model model) {
-        clientForm = new ClientForm(new Client());
+        clientForm = new ClientForm(new ClientCreationDTO());
         model.addAttribute("clientForm", clientForm);
         return "client";
     }
@@ -96,7 +100,7 @@ public class RootController {
 
     @GetMapping("/livre")
     public String livreForm(@ModelAttribute LivreForm livreForm,BindingResult result, Model model) {
-        livreForm = new LivreForm(new Livre());
+        livreForm = new LivreForm(new LivreCreationDTO());
         model.addAttribute("livreForm", livreForm);
         return "livre";
     }

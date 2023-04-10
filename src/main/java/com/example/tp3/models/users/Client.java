@@ -62,59 +62,5 @@ public class Client {
     }
 
 
-    public Emprunt borrowBook(Document document){
-        if(verifyEnoughExemplaires(document) && !checkHasDebts()){
-            Emprunt emprunt = Emprunt.builder().client(this).doc(document).build();
-            emprunt.getDoc().setExemplaires(emprunt.getDoc().getExemplaires() - 1);
-            emprunt.setDateRetour();
-            emprunts.add(emprunt);
-            return emprunt;
-        }
-        else return null;
-
-    }
-
-    private boolean verifyEnoughExemplaires(Document document){
-        return document.getExemplaires() > 0;
-    }
-
-
-    public Dette returnBook(Document livre){
-        for(Emprunt e : emprunts){
-            if(e.getDoc() == livre){
-               return checkDetteEmprunt(e);
-            }
-        }
-        return null;
-    }
-
-    private Dette checkDetteEmprunt(Emprunt emprunt){
-        long amtOfDaysLate = emprunt.getDateDeRetour().until(LocalDate.now(), ChronoUnit.DAYS);
-        return setNewDette(emprunt, amtOfDaysLate);
-
-    }
-
-    private Dette setNewDette(Emprunt e, long daysLate){
-        Dette dette = Dette.builder().amende(daysLate * 0.25).client(this).build();
-        dette.setEmpruntEndette(e);
-        dettes.add(dette);
-        return dette;
-    }
-
-    private boolean checkHasDebts(){
-        return !this.dettes.isEmpty();
-    }
-
-    public Dette returnDocument(Document document) {
-        for(Emprunt e : emprunts){
-            if(e.getDoc() == document){
-                System.out.println("found");
-                return checkDetteEmprunt(e);
-            }
-
-        }
-        return null;
-    }
-
 
 }

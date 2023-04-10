@@ -1,5 +1,7 @@
 package com.example.tp3.service;
 
+import com.example.tp3.dtos.ClientDTO;
+import com.example.tp3.dtos.LivreDTO;
 import com.example.tp3.models.library.*;
 import com.example.tp3.models.users.Client;
 import com.example.tp3.repository.*;
@@ -14,18 +16,15 @@ import java.util.*;
 public class LibraryService {
 
     //Repositories
-    private final AdminRepository adminRepository;
+
     private final ClientRepository clientRepository;
-    private final DetteRepository detteRepository;
     private final DocumentRepository documentRepository;
     private final EmpruntRepository empruntRepository;
     private final LivreRepository livreRepository;
     private final MediaRepository mediaRepository;
 
-    public LibraryService(AdminRepository adminRepository, ClientRepository clientRepository, DetteRepository detteRepository, DocumentRepository documentRepository, EmpruntRepository empruntRepository, LivreRepository livreRepository, MediaRepository mediaRepository) {
-        this.adminRepository = adminRepository;
+    public LibraryService(ClientRepository clientRepository, DocumentRepository documentRepository, EmpruntRepository empruntRepository, LivreRepository livreRepository, MediaRepository mediaRepository) {
         this.clientRepository = clientRepository;
-        this.detteRepository = detteRepository;
         this.documentRepository = documentRepository;
         this.empruntRepository = empruntRepository;
         this.livreRepository = livreRepository;
@@ -35,34 +34,6 @@ public class LibraryService {
     public Livre saveLivre(String title, String author, String editor, long exemplaires, int releaseYear, int nbPages, String genre){
         return livreRepository.save(Livre.builder().title(title).author(author).editor(editor).exemplaires(exemplaires).releaseYear(releaseYear).nbPages(nbPages).genre(genre).build());
     }
-    public Media saveMedia(String title, String author, String editor, long exemplaires, int releaseYear, String length, MediaType type){
-        return mediaRepository.save(Media.builder().title(title).author(author).editor(editor).exemplaires(exemplaires).releaseYear(releaseYear).length(length).type(type).build());
-    }
-
-    public List<Document> findDocumentWithTitle(String title){
-        return documentRepository.findDocumentWithTitle(title);
-    }
-
-
-    public List<Document> findDocumentWithAuthor(String author){
-        return documentRepository.findDocumentWithAuthor(author);
-    }
-
-
-    public List<Document> findDocumentWithYear(int year){
-        return documentRepository.findDocumentWithYear(year);
-    }
-
-
-    public List<Document> findDocumentWithCategory(String category){
-        return documentRepository.findDocumentWithCategory(category);
-    }
-
-
-
-
-
-
 
 
     //Client
@@ -70,8 +41,14 @@ public class LibraryService {
         return clientRepository.save(Client.builder().clientName(name).clientAddress(address).build());
     }
 
-    public List<Client> getClients(){
-        return clientRepository.findAll();
+    public List<ClientDTO> getClients(){
+        List<Client> clients = clientRepository.findAll();
+        List<ClientDTO> dtos = new ArrayList<>();
+        for(Client c  : clients){
+            ClientDTO dto = ClientDTO.builder().clientID(c.getClientID()).clientName(c.getClientName()).clientAddress(c.getClientAddress()).build();
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
 
@@ -103,10 +80,6 @@ public class LibraryService {
                 throw new Exception("Document déjà dans votre liste d'emprunt");
             }
         }
-
-
-
-
         document.setExemplaires(document.getExemplaires() - 1);
         documentRepository.save(document);
         Emprunt emprunt = Emprunt.builder().doc(document).client(client).dateDeRetour(LocalDate.now().minusDays(1)).build();
@@ -137,7 +110,7 @@ public class LibraryService {
         return null;
     }
 
-    public ArrayList<Emprunt> getEmprunts(long clientId){
+    public List<Emprunt> getEmprunts(long clientId){
         return empruntRepository.findEmprunts(clientId);
     }
 
@@ -149,8 +122,15 @@ public class LibraryService {
         livreRepository.save(livre);
     }
 
-    public List<Livre> getLivres() {
-        return livreRepository.findAll();
+    public List<LivreDTO> getLivres() {
+        List<Livre> livres = livreRepository.findAll();
+        List<LivreDTO> livreDTOS = new ArrayList<>();
+        for (Livre l : livres){
+            LivreDTO dto = LivreDTO.builder().author(l.getAuthor()).genre(l.getGenre()).editor(l.getEditor())
+                    .title(l.getTitle()).nbPages(l.getNbPages()).exemplaires(l.getExemplaires()).releaseYear(l.getReleaseYear()).build();
+            livreDTOS.add(dto);
+        }
+        return livreDTOS;
     }
 
     public List<Media> getMedias() {
